@@ -16,6 +16,7 @@ public class dragflip : MonoBehaviour {
       private Vector3 GetMouseWorldPos() {
         Vector3 mousePoint = Input.mousePosition;
         mousePoint.z = mZCoord;
+        mousePoint.y = 0;
 
         return Camera.main.ScreenToWorldPoint(mousePoint);
     }
