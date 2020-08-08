@@ -2,13 +2,18 @@
 
 public class dragflip : MonoBehaviour {
 
+    public float flipForce;
     private float mZCoord;
     private Vector3 mOffset;
     private Vector3 draggedDistance;
     private Rigidbody rb;
 
+    private void Start() {
+        rb        = this.GetComponent<Rigidbody>();
+    }
+
     private void OnMouseDown() {
-        rb      = this.GetComponent<Rigidbody>();
+
         mZCoord = Camera.main.WorldToScreenPoint(transform.position).z;
         mOffset = transform.position - GetMouseWorldPos();
     }
@@ -26,7 +31,7 @@ public class dragflip : MonoBehaviour {
     }
 
     private void OnMouseUp() {
-        rb.AddForce(draggedDistance*500);
+        rb.AddForce(draggedDistance*flipForce);
         //transform.position += draggedDistance;
     }
 }

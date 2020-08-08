@@ -21,15 +21,17 @@ public class TopDownCamera : MonoBehaviour
         public bool smoothFollow = true;
         public float smooth = 0.05f;
 
-        private float newDistance = -50;
+        [HideInInspector]
+        public float newDistance = -50;
     }
 
     [System.Serializable]
     public class OrbitSettings {
-        public float xRotation = -65;
+        public float xRotation = -30;
         public float yRotation = -180;
         public bool allowOrbit = true;
         public float yOrbitSmooth = 0.5f;
+        public float orbitSpeed = 5f;
     }
 
     [System.Serializable]
@@ -96,14 +98,39 @@ public class TopDownCamera : MonoBehaviour
 
     void LookAtTarget() {
         Quaternion targetRotation = Quaternion.LookRotation(target.position - transform.position);
-        transform.rotation = target.rotation;
+        transform.rotation = targetRotation;
     }
 
     void MouseOrbitTarget() {
+        PreviousMousePosition = currentMousePosition;
+        currentMousePosition = Input.mousePosition;
 
+        // MouseOrbit entfernt, da dies mit der Spielsteuerung kollidiert
+        // if (mouseOrbitInput > 0) {
+        //     orbit.yRotation += (currentMousePosition.x - PreviousMousePosition.x) * orbit.yOrbitSmooth;
+        // }
+
+        if (Input.GetKey("left")){
+            orbit.yRotation -= orbit.orbitSpeed * orbit.yOrbitSmooth;
+        }
+
+        if (Input.GetKey("right")){
+            orbit.yRotation += orbit.orbitSpeed * orbit.yOrbitSmooth;
+        }
     }
 
     void ZoomInOnTarget() {
+        position.newDistance += position.zoomStep * zoomInput;
 
+        position.distanceFromTarget = Mathf.Lerp(position.distanceFromTarget, position.newDistance, position.zoomSmooth*Time.deltaTime);
+
+        if (position.distanceFromTarget > position.maxZoom) {
+            position.distanceFromTarget = position.maxZoom;
+            position.newDistance = position.maxZoom;
+        }
+        if (position.distanceFromTarget < position.minZoom) {
+            position.distanceFromTarget = position.minZoom;
+            position.newDistance = position.minZoom;
+        }
     }
 }
